@@ -9,6 +9,7 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.StrictLogging
 import example.Shared
+import example.nettypure.NettyTest.logger
 import kamon.metric.PeriodSnapshot
 import kamon.{Kamon, MetricReporter}
 
@@ -31,16 +32,17 @@ object AkkaHttpTest extends App with StrictLogging{
         logger.info(s"${s.name} ${s.distribution.max}")
       }
       logger.info(s"akka.http.total.requests ${total.get()}")
+      logger.info(s"openFileDescriptorCount: ${Shared.getOpenFiles()}")
     }
   })
 
 
-  implicit val system = ActorSystem("server")
-  implicit val materializer = ActorMaterializer()
+  private implicit val system = ActorSystem("server")
+  private implicit val materializer = ActorMaterializer()
   // needed for the future flatMap/onComplete in the end
-  implicit val executionContext = system.dispatcher
+  private implicit val executionContext = system.dispatcher
 
-  val route =
+  private val route =
     pathSingleSlash {
       complete{
         total.incrementAndGet()

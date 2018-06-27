@@ -6,6 +6,7 @@ import java.util.concurrent.{Executors, TimeUnit}
 
 import com.typesafe.scalalogging.StrictLogging
 import example.Shared
+import example.nettypure.NettyTest.logger
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory
 import org.slf4j.bridge.SLF4JBridgeHandler
 
@@ -71,6 +72,7 @@ object JerseyTest extends App with StrictLogging{
         logger.info(a.getName + " " + mbeanServer.getAttribute(serverFilter.getObjectName, a.getName))
       )
     }
+    logger.info(s"openFileDescriptorCount: ${Shared.getOpenFiles()}")
   }.recover{
     case e => logger.error("error getting metrics", e)
   }, 0, 5, TimeUnit.SECONDS)

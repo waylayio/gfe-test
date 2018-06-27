@@ -54,6 +54,7 @@ object NettyTest extends App with StrictLogging{
 
   def logStats(): Unit = {
     logger.info(s"request.count: ${requestCounter.get()}")
+    logger.info(s"openFileDescriptorCount: ${Shared.getOpenFiles()}")
   }
 }
 
