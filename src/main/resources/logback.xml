@@ -1,0 +1,24 @@
+<configuration>
+
+    <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %30.30logger{30} %highlight(%-5level) %msg%n%ex</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT" />
+    </appender>
+
+    <logger name="akka.io.TcpListener" level="DEBUG" />
+    <logger name="org.glassfish" level="DEBUG" />
+
+
+
+    <root level="INFO">
+        <appender-ref ref="ASYNCSTDOUT" />
+    </root>
+
+</configuration>
