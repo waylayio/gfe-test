@@ -1,10 +1,11 @@
-package example
+package example.jerseygrizzly
 
 import java.lang.management.ManagementFactory
 import java.net.URI
 import java.util.concurrent.{Executors, TimeUnit}
 
 import com.typesafe.scalalogging.StrictLogging
+import example.Shared
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory
 import org.slf4j.bridge.SLF4JBridgeHandler
 
@@ -22,7 +23,7 @@ object JerseyTest extends App with StrictLogging{
   SLF4JBridgeHandler.install()
 
   // Base URI the Grizzly HTTP server will listen on
-  val BASE_URI = URI.create(s"http://localhost:${Shared.port}")
+  val BASE_URI = URI.create(s"http://${Shared.host}:${Shared.port}")
 
   import org.glassfish.jersey.server.ResourceConfig
 
@@ -77,7 +78,7 @@ object JerseyTest extends App with StrictLogging{
 
   logger.info(s"Jersey app started at $BASE_URI \nHit enter to stop it...")
 
-  //val shutdownHook = Shared.localClient()
+  //val shutdownHook = TestClient.localClient()
 
   StdIn.readLine() // let it run until user presses return
 

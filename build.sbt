@@ -30,6 +30,9 @@ lazy val root = (project in file(".")).
       "org.glassfish.grizzly" % "grizzly-http-monitoring" % "2.4.3",
       "org.glassfish.grizzly" % "grizzly-http-server-monitoring" % "2.4.3",
 
+      // netty
+      "io.netty" % "netty-all" % "4.1.25.Final",
+
       scalaTest % Test
     )
 

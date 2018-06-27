@@ -1,4 +1,4 @@
-package example;
+package example.jerseygrizzly;
  
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

@@ -1,19 +1,17 @@
-package example
+package example.akkahttp
 
 import java.util.concurrent.atomic.AtomicInteger
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.StrictLogging
+import example.Shared
 import kamon.metric.PeriodSnapshot
 import kamon.{Kamon, MetricReporter}
 
-import scala.concurrent.Future
-import scala.concurrent.duration._
 import scala.io.StdIn
 
 object AkkaHttpTest extends App with StrictLogging{
@@ -50,11 +48,11 @@ object AkkaHttpTest extends App with StrictLogging{
       }
     }
 
-  val bindingFuture = Http().bindAndHandle(route, "localhost", Shared.port)
+  val bindingFuture = Http().bindAndHandle(route, Shared.host, Shared.port)
 
-  logger.info(s"Server online at http://localhost:${Shared.port}/\nPress RETURN to stop...")
+  logger.info(s"Server online at http://${Shared.host}:${Shared.port}/\nPress RETURN to stop...")
 
-  //val shutdownHook = Shared.localClient()
+  //val shutdownHook = TestClient.localClient()
 
   StdIn.readLine() // let it run until user presses return
   bindingFuture

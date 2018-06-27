@@ -1,4 +1,4 @@
-package example;
+package example.jerseygrizzly;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
