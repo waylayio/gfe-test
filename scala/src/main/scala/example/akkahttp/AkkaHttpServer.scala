@@ -73,7 +73,7 @@ object AkkaHttpServer extends App with StrictLogging{
           val contentType = `text/plain(UTF-8)`
           val byteStringSource = Source
             .repeat(ByteString("Hi from akka.", contentType.charset.nioCharset()))
-            .take(1024 * Random.nextInt(1024))
+            .take(Random.nextInt(1024 * 64))
           HttpEntity(contentType, byteStringSource)
         }
       }
