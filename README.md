@@ -46,10 +46,13 @@ modify source to tweak delay / client connection pool
 
 ## Results
 
+GFE: Run a single server with google ingress controller in front (default config)
+Client: single jvm akka client with connection pool (from our office)
+
+
 ### Fast server
 
-Run a single server with google ingress controller in front (default config)
-Run a single client with connection pool (from our office)
+Server returns as fast as possible with a small text message.
 
 We are mainly investigating the number of open sockets on the server compared to the number of open sockets on the client
 
@@ -64,7 +67,7 @@ Client conn | Client req/sec | AkkaHttp conn | Go conn  | Node conn |
 
 ### Slow server
 
-we introduce a delay on the response and always work with 64 client connections
+We introduce a delay on the response
 
 Server delay (ms) | Client req/sec | AkkaHttp conn | AkkaHttp active req
 ---               | ---            | ---           | ---
@@ -75,22 +78,28 @@ Server delay (ms) | Client req/sec | AkkaHttp conn | AkkaHttp active req
 100               | 448            | 432           | 64
 200               | 260            | 428           | 64
 1000              | 64             | 310           | 64
+random 0-2000     | 550            | 1024 !!!      | 326     + frequent bursts of 502 errors!!!
 
 probably the low delays can not be respected by the server
 
-### High client connection count
+the random delay prefers low values and mimics actual server load
+
+### High client connection count with fast server
 
 Akka http limits the number of server connections to 1024 by default, we try to find a as high as possible client setting until we get 502 errors
 
-Client set up to open a max of 512 connections, we get 8000 req/sec and the load balancer has only 680 connections open to the server and akka reports 4 active requests
+Client set up to open a max of 512 connections, we get 8k req/sec (10k when ot using https) and the load balancer has only 680 connections open to the server and akka reports 4 active requests
 
 
 ### Observations
 
-* The number of connections on serverside goes up fast
+* The number of connections on serverside goes up fast, but grows slower once a lot of requests are made
 * Observed socket polling, every 5 sec we get 20 connections from upstream
 * All requests returned 200 which is good
 * When using Node.js as server the connections drop fast (3sec) when the client disconnects, with akka 1 min and go 10 min.
-
+* Once the limit of 1024 is reached it is hard to get out of that zone as requests build up, uptime checkers fail, causing a connection avalanch once things are recovering.
+* Http or https makes no difference
+* Big requests (1-5MB) just slow everything down, not more connections in use
 
 __So why do we on this other system see 1024+ connections to a akka http server if there are only 50 req/sec?__
+(probably bursty slow traffic on startup, higher cpu load and kubernetes overhead)
