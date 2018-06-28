@@ -6,16 +6,18 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
+import akka.pattern.after
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.StrictLogging
 import example.Shared
-import example.nettypure.NettyTest.logger
 import kamon.metric.PeriodSnapshot
 import kamon.{Kamon, MetricReporter}
 
+import scala.concurrent.Future
+import scala.concurrent.duration._
 import scala.io.StdIn
 
-object AkkaHttpTest extends App with StrictLogging{
+object AkkaHttpServer extends App with StrictLogging{
   
   final val total = new AtomicInteger()
 
@@ -48,7 +50,15 @@ object AkkaHttpTest extends App with StrictLogging{
         total.incrementAndGet()
         "Hi from akka\n"
       }
-    }
+    } ~
+      path("slow"){
+        onComplete(after(200.millis, system.scheduler)(Future.successful(()))){ _ =>
+          complete{
+            total.incrementAndGet()
+            "Hi from akka\n"
+          }
+        }
+      }
 
   val bindingFuture = Http().bindAndHandle(route, Shared.host, Shared.port)
 

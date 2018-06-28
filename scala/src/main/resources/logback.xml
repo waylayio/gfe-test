@@ -13,6 +13,7 @@
     </appender>
 
     <logger name="akka.io.TcpListener" level="DEBUG" />
+    <logger name="akka.io.TcpOutgoingConnection" level="DEBUG" />
     <logger name="org.glassfish" level="DEBUG" />
     <!--<logger name="io.netty" level="DEBUG" />-->
 

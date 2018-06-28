@@ -17,7 +17,7 @@ import io.netty.util.internal.logging.Slf4JLoggerFactory
 
 import scala.io.StdIn
 
-object NettyTest extends App with StrictLogging{
+object NettyServer extends App with StrictLogging{
 
   private final val requestCounter = new AtomicInteger()
 

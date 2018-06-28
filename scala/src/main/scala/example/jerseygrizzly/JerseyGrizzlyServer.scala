@@ -6,7 +6,7 @@ import java.util.concurrent.{Executors, TimeUnit}
 
 import com.typesafe.scalalogging.StrictLogging
 import example.Shared
-import example.nettypure.NettyTest.logger
+import example.nettypure.NettyServer.logger
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory
 import org.slf4j.bridge.SLF4JBridgeHandler
 
@@ -14,7 +14,7 @@ import scala.collection.JavaConverters._
 import scala.io.StdIn
 import scala.util.Try
 
-object JerseyTest extends App with StrictLogging{
+object JerseyGrizzlyServer extends App with StrictLogging{
 
   // Optionally remove existing handlers attached to j.u.l root logger
   SLF4JBridgeHandler.removeHandlersForRootLogger()  // (since SLF4J 1.6.5)
