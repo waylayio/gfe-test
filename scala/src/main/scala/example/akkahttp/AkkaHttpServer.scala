@@ -52,10 +52,12 @@ object AkkaHttpServer extends App with StrictLogging{
       }
     } ~
       path("slow"){
-        onComplete(after(200.millis, system.scheduler)(Future.successful(()))){ _ =>
-          complete{
-            total.incrementAndGet()
-            "Hi from akka\n"
+        parameters('delay.?) { delay =>
+          onComplete(after(delay.map(_.toInt).getOrElse(200).millis, system.scheduler)(Future.successful(()))){ _ =>
+            complete{
+              total.incrementAndGet()
+              "Hi from akka\n"
+            }
           }
         }
       }

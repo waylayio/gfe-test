@@ -17,7 +17,7 @@ import scala.util.{Failure, Success, Try}
 object TestClient extends StrictLogging{
 
   def main(args: Array[String]) : Unit = {
-    val uri = Uri("https://francistest.waylay.io")
+    val uri = Uri("https://francistest.waylay.io/slow?delay=1000")
     val shutdown = localClient(uri, maxConnections = 64)
     logger.info(s"Generating load on $uri, press return to stop...")
     StdIn.readLine()
