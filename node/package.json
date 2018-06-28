@@ -1,10 +1,7 @@
 {
-  "name": "my-awesome-package",
+  "name": "hello",
   "version": "1.0.0",
-  "dependencies": {
-    "http-server": "^0.11.1"
-  },
   "scripts": {
-    "start": "http-server -p 9002"
+    "start": "node default.js"
   }
 }

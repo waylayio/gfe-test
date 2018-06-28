@@ -46,7 +46,7 @@ object AkkaHttpTest extends App with StrictLogging{
     pathSingleSlash {
       complete{
         total.incrementAndGet()
-        "Hi from akka"
+        "Hi from akka\n"
       }
     }
 

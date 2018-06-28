@@ -14,7 +14,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter
 import io.netty.handler.codec.http._
 
 object HttpHelloWorldServerHandler {
-  private val CONTENT = "Hi from netty".getBytes(Charset.forName("us-ascii"))
+  private val CONTENT = "Hi from netty\n".getBytes(Charset.forName("us-ascii"))
 }
 
 class HttpHelloWorldServerHandler(requestCounter: AtomicInteger) extends ChannelInboundHandlerAdapter {
