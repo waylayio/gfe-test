@@ -1,11 +1,14 @@
 package example
 
+import java.time
+import java.time.temporal.ChronoUnit
+
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes, Uri}
 import akka.http.scaladsl.settings.ConnectionPoolSettings
-import akka.stream.{ActorMaterializer, KillSwitches}
+import akka.stream.{ActorMaterializer, KillSwitches, ThrottleMode}
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import com.typesafe.scalalogging.StrictLogging
 
@@ -17,9 +20,9 @@ import scala.util.{Failure, Success, Try}
 object TestClient extends StrictLogging{
 
   def main(args: Array[String]) : Unit = {
-    val uri = Uri("https://francistest.waylay.io")
-    //val uri = Uri("https://francistest.waylay.io/slow?delay=1000")
-    val shutdown = localClient(uri, maxConnections = 512)
+    //val uri = Uri("https://francistest.waylay.io")
+    val uri = Uri("https://francistest.waylay.io/slow")
+    val shutdown = localClient(uri, maxConnections = 380)
     logger.info(s"Generating load on $uri, press return to stop...")
     StdIn.readLine()
     shutdown()
@@ -33,10 +36,12 @@ object TestClient extends StrictLogging{
 
     val settings = ConnectionPoolSettings(system)
       .withMaxConnections(maxConnections)
-      .withMaxOpenRequests(1024)
+      .withMaxOpenRequests(1024*4)
+      //.withPipeliningLimit(2) // default is 1
     val pool = uri.scheme match {
       case "http" =>
-        Http().cachedHostConnectionPool[Unit](uri.authority.host.address(), uri.authority.port, settings)
+        val port = Some(uri.authority.port).filter(_ != 0).getOrElse(80)
+        Http().cachedHostConnectionPool[Unit](uri.authority.host.address(), port, settings)
       case "https" =>
         val port = Some(uri.authority.port).filter(_ != 0).getOrElse(443)
         Http().cachedHostConnectionPoolHttps[Unit](uri.authority.host.address(), port, settings = settings)
@@ -52,7 +57,6 @@ object TestClient extends StrictLogging{
       .via(printFlowRate[(Try[HttpResponse], Unit)]("responses/sec", _ => 1, 1.seconds))
       .map{
         case (Success(HttpResponse(StatusCodes.OK, _, entity, _)), _) =>
-          //logger.info(resp.status.toString())
           entity.discardBytes()
         case (Success(HttpResponse(otherStatus, _, entity, _)), _) =>
           logger.warn(s"Request failed with code $otherStatus")
