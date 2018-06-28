@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
+	"log"
 )
 
 func main() {
@@ -10,5 +12,9 @@ func main() {
 		fmt.Fprintf(w, "Hi from Go! You've requested: %s\n", r.URL.Path)
 	})
 
-	http.ListenAndServe(":9002", nil)
+	port := 9002
+
+	fmt.Print("Web server starting on port " + strconv.Itoa(port) + "\n")
+
+	log.Fatal(http.ListenAndServe(":" + strconv.Itoa(port), nil))
 }
