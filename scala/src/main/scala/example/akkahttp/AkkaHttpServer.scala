@@ -16,6 +16,7 @@ import kamon.{Kamon, MetricReporter}
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.io.StdIn
+import scala.util.Random
 
 object AkkaHttpServer extends App with StrictLogging{
   
@@ -53,12 +54,18 @@ object AkkaHttpServer extends App with StrictLogging{
     } ~
       path("slow"){
         parameters('delay.?) { delay =>
-          onComplete(after(delay.map(_.toInt).getOrElse(200).millis, system.scheduler)(Future.successful(()))){ _ =>
+          val delayMillis = delay.map(_.toInt).getOrElse(Random.nextInt(1000))
+          onComplete(after(delayMillis.millis, system.scheduler)(Future.successful(()))){ _ =>
             complete{
               total.incrementAndGet()
-              "Hi from akka\n"
+              s"Hi from akka in $delayMillis ms\n"
             }
           }
+        }
+      } ~ path("big"){
+        complete{
+          total.incrementAndGet()
+           "Hi from akka" * (1024 * Random.nextInt(1024))
         }
       }
 
