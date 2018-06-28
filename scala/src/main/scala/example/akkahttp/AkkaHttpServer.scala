@@ -59,7 +59,7 @@ object AkkaHttpServer extends App with StrictLogging{
     } ~
       path("slow"){
         parameters('delay.?) { delay =>
-          val delayMillis = delay.map(_.toInt).getOrElse(Random.nextInt(1000))
+          val delayMillis = delay.map(_.toInt).getOrElse(10 + Random.nextInt(100) * (Random.nextInt(20) + 1))
           onComplete(after(delayMillis.millis, system.scheduler)(Future.successful(()))){ _ =>
             complete{
               total.incrementAndGet()
