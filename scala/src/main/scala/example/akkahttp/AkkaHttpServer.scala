@@ -1,12 +1,17 @@
 package example.akkahttp
 
+import java.nio.charset.Charset
 import java.util.concurrent.atomic.AtomicInteger
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.{HttpCharsets, HttpEntity}
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.model.ContentTypes._
 import akka.stream.ActorMaterializer
 import akka.pattern.after
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.StrictLogging
 import example.Shared
@@ -65,7 +70,11 @@ object AkkaHttpServer extends App with StrictLogging{
       } ~ path("big"){
         complete{
           total.incrementAndGet()
-           "Hi from akka" * (1024 * Random.nextInt(1024))
+          val contentType = `text/plain(UTF-8)`
+          val byteStringSource = Source
+            .repeat(ByteString("Hi from akka.", contentType.charset.nioCharset()))
+            .take(1024 * Random.nextInt(1024))
+          HttpEntity(contentType, byteStringSource)
         }
       }
 
