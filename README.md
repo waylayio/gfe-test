@@ -18,8 +18,8 @@ sbt "runMain example.nettypure.NettyServer"
 ### Node.js
 
 ```bash
-cd noden
-pm start
+cd node
+npm start
 ```
 
 ### Go
